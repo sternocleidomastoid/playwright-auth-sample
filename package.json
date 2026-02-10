@@ -1,0 +1,25 @@
+{
+  "name": "playwright-sample",
+  "version": "1.0.0",
+  "description": "Playwright test sample",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug"
+  },
+  "keywords": [
+    "playwright",
+    "testing"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.6.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/node": "^25.0.10",
+    "tigrmail": "^1.0.9"
+  }
+}
