@@ -1,6 +1,9 @@
 import { Tigrmail } from 'tigrmail';
+import MailosaurClient from 'mailosaur';
 
 export const TIGRMAIL_TOKEN = process.env.TIGRMAIL_API_KEY ?? process.env.TIGRMAIL_TOKEN;
+export const MAILOSAUR_API_KEY = process.env.MAILOSAUR_API_KEY || '';
+export const MAILOSAUR_SERVER_ID = process.env.MAILOSAUR_SERVER_ID || '';
 export const TEST_EMAIL = process.env.TEST_EMAIL || '';
 export const SIGNUP_PASSWORD = process.env.SIGNUP_PASSWORD || '!';
 export const NEW_PASSWORD = process.env.NEW_PASSWORD || '';
@@ -121,5 +124,79 @@ export async function deleteAuth0User(email: string): Promise<void> {
   }
 }
 
+export function getMailosaurClient(): MailosaurClient {
+  if (!MAILOSAUR_API_KEY) {
+    throw new Error('MAILOSAUR_API_KEY environment variable is not set');
+  }
+  return new MailosaurClient(MAILOSAUR_API_KEY);
+}
 
-// 
+export function generateMailosaurEmail(): string {
+  if (!MAILOSAUR_SERVER_ID) {
+    throw new Error('MAILOSAUR_SERVER_ID environment variable is not set');
+  }
+  const randomId = Math.random().toString(36).substring(2, 15);
+  return `test-${randomId}@${MAILOSAUR_SERVER_ID}.mailosaur.net`;
+}
+
+export async function getPasswordResetEmail(mailosaur: MailosaurClient, emailAddress: string): Promise<string> {
+  if (!MAILOSAUR_SERVER_ID) {
+    throw new Error('MAILOSAUR_SERVER_ID environment variable is not set');
+  }
+
+  const email = await mailosaur.messages.get(
+    MAILOSAUR_SERVER_ID,
+    {
+      sentTo: emailAddress,
+      subject: 'Reset your password'
+    },
+    { timeout: 60000,
+      receivedAfter: new Date(Date.now()
+    ) }
+      // Wait up to 60 seconds for the email to arrive
+  );
+
+  if (!email) {
+    throw new Error('No password reset email received');
+  }
+  
+const resetLinkText = email.html?.links?.find(link =>
+  typeof link.text === 'string' && link.text.includes('/u/reset-verify?ticket=')
+)?.text;
+
+if (!resetLinkText) {
+  throw new Error('No password reset link text found in email');
+}
+
+return resetLinkText;
+}
+
+export async function getSignupConfirmationEmail(mailosaur: MailosaurClient, emailAddress: string): Promise<string> {
+  if (!MAILOSAUR_SERVER_ID) {
+    throw new Error('MAILOSAUR_SERVER_ID environment variable is not set');
+  }
+
+  const email = await mailosaur.messages.get(
+    MAILOSAUR_SERVER_ID,
+    {
+      sentTo: emailAddress,
+    },
+    { timeout: 60000,
+      receivedAfter: new Date(Date.now() - 5000)
+    }
+  );
+
+  if (!email) {
+    throw new Error('No signup confirmation email received');
+  }
+
+  const confirmationLinkText = email.html?.links?.find(link =>
+    typeof link.text === 'string' && link.text.includes('/u/verify')
+  )?.text;
+
+  if (!confirmationLinkText) {
+    throw new Error('No signup confirmation link found in email');
+  }
+
+  return confirmationLinkText;
+}

@@ -20,6 +20,7 @@
   "devDependencies": {
     "@playwright/test": "^1.40.0",
     "@types/node": "^25.0.10",
+    "mailosaur": "^8.8.1",
     "tigrmail": "^1.0.9"
   }
 }
