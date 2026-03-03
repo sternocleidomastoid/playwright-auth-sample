@@ -6,7 +6,8 @@
   "scripts": {
     "test": "playwright test",
     "test:ui": "playwright test --ui",
-    "test:debug": "playwright test --debug"
+    "test:debug": "playwright test --debug",
+    "google:refresh-token": "node ./scripts/generate-google-refresh-token.mjs"
   },
   "keywords": [
     "playwright",
