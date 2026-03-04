@@ -1,6 +1,6 @@
 import type { FullConfig } from '@playwright/test';
 import dotenv from 'dotenv';
-import { deleteAuth0User } from './tests/testHelpers';
+import { deleteAuth0User } from './helpers/testHelpers';
 
 dotenv.config();
 

@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export default defineConfig({
-  testDir: './tests',
+  testDir: './tests/specs',
   globalTeardown: './global-teardown.ts',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
