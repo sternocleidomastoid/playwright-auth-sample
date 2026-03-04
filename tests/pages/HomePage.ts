@@ -4,7 +4,7 @@ export class HomePage {
   constructor(private readonly page: Page) {}
 
   async goto(): Promise<void> {
-    await this.page.goto('/');
+    await this.page.goto(process.env.BASE_URL || '/');
   }
 
   async clickLogin(): Promise<void> {
